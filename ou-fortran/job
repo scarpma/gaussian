@@ -1,0 +1,2 @@
+# to compile
+python -m numpy.f2py -c -m ou ou_proc.f90

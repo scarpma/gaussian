@@ -1,0 +1,6 @@
+*.ipynb_checkpoints/
+*runs/
+*__pycache__/
+data/*
+*.so
+plots/*

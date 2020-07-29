@@ -1,0 +1,3 @@
+python wgan.py --gen_iters 20000 --ncritic 30
+# >& log.txt &
+# tail -f log.txt
