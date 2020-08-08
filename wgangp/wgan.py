@@ -42,15 +42,15 @@ class WGANGP():
         # Following parameter and optimizer set as recommended in paper
         self.n_critic = n_critic
         #self.gen_lr = self.critic_lr = 0.00001
-        self.gen_lr = 0.00005
-        self.critic_lr = 0.0001
+        self.gen_lr = 0.000005
+        self.critic_lr = 0.00001
         #self.gen_lr = 0.0000000005
         #self.critic_lr = 0.000001
         self.gen_b1 = self.critic_b1 = 0.0
         self.gen_b2 = self.critic_b2 = 0.9
         gen_optimizer = Adam(learning_rate=self.gen_lr, beta_1=self.gen_b1,beta_2=self.gen_b2)
         critic_optimizer = Adam(learning_rate=self.critic_lr, beta_1=self.critic_b1,beta_2=self.critic_b2)
-        
+
 
         self.critic = critic
         self.gen = gen
@@ -117,7 +117,7 @@ class WGANGP():
         self.gen_model.compile(loss=self.wasserstein_loss, optimizer=gen_optimizer)
 
 
-        
+
     def wasserstein_loss(self, y_true, y_pred):
         return K.mean(y_true * y_pred)
 
@@ -139,17 +139,17 @@ class WGANGP():
         # return the mean as loss over all the batch samples
         return K.mean(gradient_penalty)
 
-    
+
     def get_run(self):
         runs = glob.glob('runs/*/')
         runs = sorted(runs, key=lambda x: int(x[5:-1]))
         # print('RUNS = ',runs)
         runs = [int(line[5:-1]) for line in runs]
-        
+
         if len(runs)>0: return runs[-1] + 1
         else: return 1
 
- 
+
     def plot_trajs(self, gen_trajs,epoch):
         plt.figure(figsize=(15, 2*len(gen_trajs)))
         for i, traj in enumerate(gen_trajs):
@@ -158,10 +158,10 @@ class WGANGP():
         plt.tight_layout()
         plt.savefig(self.dir_path+f'{epoch}_gen_traj.png', fmt='png', dpi=100)
         plt.close()
-   
- 
+
+
     def train(self, gen_iters, db_train, db_test):
-        
+
         # salvo info log #
         with open(self.dir_path+'logs.txt','a+') as f:
             f.write(f"TRAINING\nbatch={self.batch_size}\nncritic={self.n_critic}\ngen_iterations={gen_iters}\ngen_lr={self.gen_lr} gen_b1={self.gen_b1}  gen_b2={self.gen_b2}\ncritic_lr={self.critic_lr} critic_b1={self.critic_b1} critic_b2={self.critic_b2}\n")
@@ -171,19 +171,19 @@ class WGANGP():
         fl.close()
 
         # ############## #
-        
+
         static_noise = np.random.normal(0, 1, size=(1, self.noise_dim))
         d_loss_test = [0., 0., 0., 0.]
         g_loss = 0.
-        
+
         valid = -np.ones((self.batch_size, 1))
         fake =  np.ones((self.batch_size, 1))
         dummy = np.zeros((self.batch_size, 1)) # Dummy gt for gradient penalty
 
         print(f'\nNCRITIC = {self.n_critic}\n')
-        
 
-        for gen_iter in range(gen_iters):            
+
+        for gen_iter in range(gen_iters):
 
             fl = open(self.dir_path+'training.dat','a+')
             for jj in range(self.n_critic):
@@ -230,7 +230,7 @@ class WGANGP():
             # If at save interval => save generated image samples
             if gen_iter % 100 == 0:
                 self.plot_trajs(self.gen.predict(np.random.normal(0,1, size=(3,self.noise_dim))), gen_iter)
-            if gen_iter % 250 == 0:    
+            if gen_iter % 250 == 0:
                 self.critic.save(self.dir_path+f'{gen_iter}_critic.h5')
                 self.gen.save(self.dir_path+f'{gen_iter}_gen.h5')
             if gen_iter % 2000 == 0:# and gen_iter > 0:    
@@ -241,9 +241,9 @@ class WGANGP():
 
         self.critic.save(self.dir_path+f'{gen_iter+1}_critic.h5')
         self.gen.save(self.dir_path+f'{gen_iter+1}_gen.h5')
-        
 
-            
+
+
 if __name__ == '__main__' :
     
     parser = argparse.ArgumentParser()
@@ -299,6 +299,6 @@ if __name__ == '__main__' :
             
             
     
-    wgan = WGANGP(gen, critic, noise_dim, ncritic, 500, text)
+    wgan = WGANGP(gen, critic, noise_dim, ncritic, 250, text)
     print(f'Train for {gen_iters} generator iterations')
     wgan.train(gen_iters, db_train, db_test)

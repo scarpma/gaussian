@@ -4,7 +4,7 @@
 def compute_structure_function(db,npart=None):
     import ou
     import numpy as np
-    struct = np.zeros(shape=(23,4),order='f')
+    struct = np.zeros(shape=(34,4),order='f')
     if db.shape[-1] == 2000:
         print("Database shape ok, continuing...")
         if npart != None:
@@ -32,7 +32,7 @@ def compute_structure_function(db,npart=None):
         elif npart == None:
             print(f"Taking entire dataset, {npart} samples") 
             print("Converting database to fortran order")
-            dbn = np.asfortranarray(db.T)
+            dbn = np.asfortranarray(db[:,:,0].T)
             ou.compute_struct(struct,dbn)
             return np.ascontiguousarray(struct)
 
@@ -41,10 +41,10 @@ def compute_structure_function(db,npart=None):
 
 if __name__ == '__main__' :
     
-    run=0
+    run=6
     number=1750
     npart=None
-    media=0
+    media=1
     
     
     import numpy as np
@@ -57,16 +57,16 @@ if __name__ == '__main__' :
 
     print("Database import: ", end="")
     if run==0:
-        #path_v = f'../databases/gaussian_process.npy'
-        path_v = f'../databases/gaussian_process_smooth.npy'
+        path_v = f'/storage/scarpolini/databases/gaussian_process.npy'
+        #path_v = f'../databases/gaussian_process_smooth.npy'
         print(path_v)
     elif media==0:
         #path_v = f'wgangps/runs/{run}/gen_trajs_{number}.npy'
-        path_v = f'wgangp/runs/{run}/gen_trajs_{number}.npy'
+        path_v = f'/storage/scarpolini/databases/gaussian/wgangp/runs/{run}/gen_trajs_{number}.npy'
         print(path_v)
     else:
         #path_v = f'wgangps/runs/{run}/gen_trajs_{number}_media.npy'
-        path_v = f'wgangp/runs/{run}/gen_trajs_{number}_media.npy'
+        path_v = f'/storage/scarpolini/databases/gaussian/wgangp/runs/{run}/gen_trajs_{number}_media.npy'
         print(path_v)
     
     
@@ -81,8 +81,8 @@ if __name__ == '__main__' :
     """
 
     if run==0: 
-        #save_path = f"data/real/struct_function_{npart_save}_part"
-        save_path = f"data/real/struct_function_{npart_save}_part_smooth"
+        save_path = f"data/real/struct_function_{npart_save}_part"
+        #save_path = f"data/real/struct_function_{npart_save}_part_smooth"
         print("save_path = ",save_path)
     #elif media == 0: 
     #    save_path = f"data/wgangps/struct_function_{npart_save}_part_gen_{run}_{number}"
@@ -101,7 +101,7 @@ if __name__ == '__main__' :
 
 
 
-    s = compute_structure_function(db)
+    s = compute_structure_function(db,npart)
     print("Saving ...")
     np.save(save_path,s)
     print("Done!")

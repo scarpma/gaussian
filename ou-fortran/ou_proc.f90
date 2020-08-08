@@ -42,7 +42,7 @@ subroutine compute_struct(struct,db) ! in :compute_struct:ou_proc.f90
     real(8), intent(in), dimension(:,:) :: db
     real(8), dimension(:), allocatable :: diff
     integer :: tt, npart, times, tau_index !, kk
-    integer, dimension(23) :: taus
+    integer, dimension(34) :: taus
     real(8) :: p2, p4, p6
     
     npart = size(db,2)
@@ -50,9 +50,11 @@ subroutine compute_struct(struct,db) ! in :compute_struct:ou_proc.f90
 
     allocate(diff(npart))
 
-    taus = (/ 2,3,4,5,6,8,11,14,19,25,34,45,59,79,104,138,184,244,323,429,568,754,1000 /)
+    taus = (/ 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 18, 22, 26, 31, 38,   &
+            46, 55, 66, 79, 95, 114, 137, 164, 197, 237, 284, 341, 410, &
+            492, 590, 708, 850, 1020 /)
 
-    do tau_index = 1, 23
+    do tau_index = 1, 34
         write(*, fmt="(i0,2X)", advance="no") taus(tau_index)
         diff(:) = 0.
         p2 = 0.
