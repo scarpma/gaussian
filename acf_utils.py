@@ -33,6 +33,28 @@ def acf_x(db,npart=None):
     acfs = np.array([s_acf(traj) for traj in dbn])
     return acfs.mean(axis=0)
 
+def compute_acf(db,npart=None):
+    
+    import ou
+    from time import time
+    
+    if npart == None:
+        nun_part = db.shape[0]
+        dbn = np.asfortranarray(db.squeeze().T)
+        print(f"Taken whole dataset, {num_part} trajectories")
+    else:
+        num_part = npart
+        idx = np.random.randint(0,db.shape[0],num_part)
+        dbn = np.asfortranarray(db[idx].squeeze().T)
+        print(f"Taken partial dataset, {num_part} trajectories")
+
+    acf = np.asfortranarray(np.zeros(2000))
+    start = time()
+    ou.cor_func(dbn,acf)
+    acf = np.ascontiguousarray(acf)
+    print(time()-start)
+   
+    return acf
 
 def exit_time(paths, soglia):
     for jj, path in enumerate(paths):

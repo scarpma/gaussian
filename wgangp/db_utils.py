@@ -95,7 +95,7 @@ import matplotlib as mpl
 
 
 def load_data(val_split):
-    path = '/scratch/scarpolini/databases/gaussian_process_smooth.npy'
+    path = '/scratch/scarpolini/databases/gaussian_process2_smooth.npy'
     db = np.load(path)[:327680,:]
     db = db.reshape((db.shape[0],db.shape[1],1))
     print(db.shape)

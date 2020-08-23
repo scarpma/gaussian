@@ -42,8 +42,8 @@ class WGANGP():
         # Following parameter and optimizer set as recommended in paper
         self.n_critic = n_critic
         #self.gen_lr = self.critic_lr = 0.00001
-        self.gen_lr = 0.000005
-        self.critic_lr = 0.00001
+        self.gen_lr = 0.0000025
+        self.critic_lr = 0.000005
         #self.gen_lr = 0.0000000005
         #self.critic_lr = 0.000001
         self.gen_b1 = self.critic_b1 = 0.0
@@ -299,6 +299,6 @@ if __name__ == '__main__' :
             
             
     
-    wgan = WGANGP(gen, critic, noise_dim, ncritic, 250, text)
+    wgan = WGANGP(gen, critic, noise_dim, ncritic, 1000, text)
     print(f'Train for {gen_iters} generator iterations')
     wgan.train(gen_iters, db_train, db_test)

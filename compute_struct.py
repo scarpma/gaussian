@@ -41,10 +41,10 @@ def compute_structure_function(db,npart=None):
 
 if __name__ == '__main__' :
     
-    run=6
-    number=1750
+    run=18
+    number=2000
     npart=None
-    media=1
+    media=0
     
     
     import numpy as np
@@ -57,7 +57,9 @@ if __name__ == '__main__' :
 
     print("Database import: ", end="")
     if run==0:
-        path_v = f'/storage/scarpolini/databases/gaussian_process.npy'
+        #path_v = f'/storage/scarpolini/databases/gaussian_process.npy'
+        #path_v = f'/storage/scarpolini/databases/gaussian_process2.npy'
+        path_v = f'/storage/scarpolini/databases/gaussian_process2_smooth.npy'
         #path_v = f'../databases/gaussian_process_smooth.npy'
         print(path_v)
     elif media==0:
@@ -74,14 +76,16 @@ if __name__ == '__main__' :
     if npart == None:
         npart_save = db.shape[0]
     else :
-        npart_save = n_part
+        npart_save = npart
     
     """
     SAVING
     """
 
     if run==0: 
-        save_path = f"data/real/struct_function_{npart_save}_part"
+        #save_path = f"data/real/struct_function_{npart_save}_part"
+        #save_path = f"data/real/struct_function2_{npart_save}_part"
+        save_path = f"data/real/struct_function2_{npart_save}_part_smooth"
         #save_path = f"data/real/struct_function_{npart_save}_part_smooth"
         print("save_path = ",save_path)
     #elif media == 0: 

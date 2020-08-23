@@ -74,3 +74,116 @@ subroutine compute_struct(struct,db) ! in :compute_struct:ou_proc.f90
     deallocate(diff)
 
 end subroutine
+
+subroutine cor_func(db,acf) ! in :corr_func:ou_proc.f90
+    
+    implicit none
+    real(8), intent(inout), dimension(:,:) :: db
+    real(8), intent(inout), dimension(:) :: acf
+    real(8) :: mean
+    integer :: npart, times, tt, tau, kk
+
+    npart = size(db,2)
+    times = size(db,1)
+    if (size(acf) .ne. times) then
+        call exit()
+    end if
+
+    ! CALCOLO FUNZIONE DI AUTOCORRELAZIONE 
+    do kk = 1, npart
+        acf(:) = 0.
+        mean = 0.
+        do tau = 0, times-1
+            mean = mean + db(1+tau,kk)
+            do tt = 1, times - tau
+                acf(1+tau) = acf(1+tau) + db(tt+tau,kk)*db(tt,kk) 
+            end do
+            acf(1 + tau) = acf(1 + tau) / (times - tau)
+        end do
+        mean = mean / times
+        db(:,kk) = ( acf(:) - mean**2. ) / ( acf(1) - mean**2. )
+    end do
+
+end subroutine
+
+!subroutine cor_func(db,acf) ! in :corr_func:ou_proc.f90
+!    
+!    implicit none
+!    real(8), intent(in), dimension(:,:) :: db
+!    real(8), intent(inout), dimension(:) :: acf
+!    real(8) :: std, mean
+!    integer :: npart, times, tt, tau, kk
+!
+!    std = 0.
+!    mean = 0.
+!    acf(:) = 0.
+!
+!    npart = size(db,2)
+!    times = size(db,1)
+!    if (size(acf) .ne. times) then
+!        call exit()
+!    end if
+!
+!    ! CALCOLO FUNZIONE DI AUTOCORRELAZIONE 
+!    do kk = 1, npart
+!        do tau = 0, times-1
+!            do tt = 1, times - tau
+!                acf(1+tau) = acf(1+tau) + db(tt+tau,kk)*db(tt,kk) 
+!            end do
+!        end do
+!    end do
+!    do tau = 0, times-1
+!        acf(1 + tau) = acf(1 + tau) / ((times - tau)*npart)
+!    end do
+!
+!    ! CALCOLO MEDIA E VARIANZA
+!    do kk = 1, npart
+!        do tt = 1, times
+!            mean = mean + db(tt,kk)
+!        end do
+!    end do
+!
+!    mean = mean / (npart * times)
+!    std = acf(1) - mean**2.
+!
+!    acf(:) = ( acf(:) - mean**2. ) / std
+!
+!end subroutine
+
+
+
+subroutine correlate(db,acf) ! in :correlate:ou_proc.f90
+    
+    implicit none
+    real(8), intent(in), dimension(:) :: db
+    real(8), intent(inout), dimension(:) :: acf
+    real(8) :: mean
+    integer :: times, tt, tau
+
+    mean = 0.
+
+    times = size(db)
+    if (size(acf) .ne. times) then
+        call exit()
+    end if
+
+    ! CALCOLO FUNZIONE DI AUTOCORRELAZIONE 
+    do tau = 0, times-1
+        do tt = 1, times - tau
+            acf(1+tau) = acf(1+tau) + db(tt+tau)*db(tt)
+        end do
+        acf(1 + tau) = acf(1 + tau) / (times - tau)
+    end do
+
+    ! CALCOLO MEDIA E VARIANZA
+    do tt = 1, times
+        mean = mean + db(tt)
+    end do
+
+    mean = mean / times
+
+    acf = acf - mean**2.
+
+    acf = acf / acf(1)
+
+end subroutine

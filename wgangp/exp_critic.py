@@ -18,19 +18,19 @@ def build_critic(fs, fm, init_sigma, init_mean, alpha):
     #discriminator.add(ELU())
     discriminator.add(ReLU(negative_slope=alpha))
     #
-    discriminator.add(Conv1D(fm//8, fs, strides=2, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))    
+    discriminator.add(Conv1D(fm//8, fs//2, strides=2, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))    
     #discriminator.add(ELU())
     discriminator.add(ReLU(negative_slope=alpha))
     #
-    discriminator.add(Conv1D(fm//4, fs, strides=2, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma))) 
+    discriminator.add(Conv1D(fm//4, fs//2, strides=2, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma))) 
     #discriminator.add(ELU())
     discriminator.add(ReLU(negative_slope=alpha))
     #
-    discriminator.add(Conv1D(fm//2, fs, strides=2, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma))) 
+    discriminator.add(Conv1D(fm//2, fs//4, strides=2, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma))) 
     #discriminator.add(ELU())
     discriminator.add(ReLU(negative_slope=alpha))
     #
-    discriminator.add(Conv1D(fm, fs, strides=5, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma))) 
+    discriminator.add(Conv1D(fm, fs//4, strides=5, padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma))) 
     #discriminator.add(ELU())
     discriminator.add(ReLU(negative_slope=alpha))
     #
@@ -47,7 +47,7 @@ def build_critic(fs, fm, init_sigma, init_mean, alpha):
 
 
 if __name__ == '__main__':
-    fs = 100
+    fs = 20
     fm = 128
     init_sigma = 0.02
     init_mean = 0.01

@@ -29,21 +29,21 @@ def build_generator(fs, fm, init_sigma, init_mean, alpha, noise_dim):
     generator.add(Reshape((25, 1, fm)))
     #5x4
     generator.add(BatchNormalization(momentum=0.8))
-    generator.add(Conv2DTranspose(fm//2, fs, strides=(5,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
+    generator.add(Conv2DTranspose(fm//2, (25,1), strides=(5,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
     #generator.add(ELU())
     generator.add(ReLU())
     #50x4
     generator.add(BatchNormalization(momentum=0.8))
-    generator.add(Conv2DTranspose(fm//4, fs, strides=(2,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
+    generator.add(Conv2DTranspose(fm//4, (25,1), strides=(2,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
     #generator.add(ELU())
     generator.add(ReLU())
     generator.add(BatchNormalization(momentum=0.8))
-    generator.add(Conv2DTranspose(fm//8, fs, strides=(2,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
+    generator.add(Conv2DTranspose(fm//8, (50,1), strides=(2,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
     #generator.add(ELU())
     generator.add(ReLU())
     #50x4
     generator.add(BatchNormalization(momentum=0.8))
-    generator.add(Conv2DTranspose(fm//16, fs, strides=(2,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
+    generator.add(Conv2DTranspose(fm//16, (50,1), strides=(2,1), padding='same', kernel_regularizer=reg, bias_regularizer=reg, kernel_initializer=RandomNormal(init_mean, init_sigma)))
     #generator.add(ELU())
     generator.add(ReLU())
     generator.add(BatchNormalization(momentum=0.8))
@@ -62,7 +62,7 @@ def build_generator(fs, fm, init_sigma, init_mean, alpha, noise_dim):
 
 
 if __name__ == '__main__':
-    fs = (100,1)
+    fs = (20,1)
     fm = 128
     init_sigma = 0.02
     init_mean = 0.01
