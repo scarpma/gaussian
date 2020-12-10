@@ -41,12 +41,14 @@ subroutine compute_struct(struct,db) ! in :compute_struct:ou_proc.f90
     real(8), intent(inout), dimension(:,:) :: struct
     real(8), intent(in), dimension(:,:) :: db
     real(8), dimension(:), allocatable :: diff
-    integer :: tt, npart, times, tau_index !, kk
-    integer, dimension(34) :: taus
-    real(8) :: p2, p4, p6
+    integer(8) :: tt, npart, times, tau_index !, kk
+    integer(8), dimension(34) :: taus
+    real(8) :: p2, p4, p6, p8, p10, p12
     
     npart = size(db,2)
     times = size(db,1)
+    !write(*,*) "From fortran: npart=", npart, " times=", times
+    !write(*,*) "size_struct", size(struct,1), size(struct,2)
 
     allocate(diff(npart))
 
@@ -55,23 +57,45 @@ subroutine compute_struct(struct,db) ! in :compute_struct:ou_proc.f90
             492, 590, 708, 850, 1020 /)
 
     do tau_index = 1, 34
-        write(*, fmt="(i0,2X)", advance="no") taus(tau_index)
+        !write(*,*) "From fortran: ", taus(tau_index)
+        write(*,*) "From fortran: tau_index=", tau_index
         diff(:) = 0.
         p2 = 0.
         p4 = 0.
         p6 = 0.
+        p8 = 0.
+        p10 = 0.
+        p12 = 0.
         do tt = 1, times - taus(tau_index)
            diff(:) = db(tt+taus(tau_index),:) - db(tt,:)
            p2 = p2 + sum(diff**2)
            p4 = p4 + sum(diff**4)
            p6 = p6 + sum(diff**6)
+           p8 = p8 + sum(diff**8)
+           p10 = p10 + sum(diff**10)
+           p12 = p12 + sum(diff**12)
         end do
+        !write(*,*) "From fortran: p2:", p2
+        !write(*,*) "From fortran: p4:", p4
+        !write(*,*) "From fortran: p6:", p6
         struct(tau_index,2) = p2 / ((times-taus(tau_index))*npart)
         struct(tau_index,3) = p4 / ((times-taus(tau_index))*npart)
         struct(tau_index,4) = p6 / ((times-taus(tau_index))*npart)
+        struct(tau_index,5) = p8 / ((times-taus(tau_index))*npart)
+        struct(tau_index,6) = p10 / ((times-taus(tau_index))*npart)
+        struct(tau_index,7) = p12 / ((times-taus(tau_index))*npart)
+        !write(*,*) "From fortran: time - taus(index) )", &
+        !    times-taus(tau_index)
+        !write(*,*) "From fortran: s2:", struct(tau_index,2) 
+        !write(*,*) "From fortran: s4:", struct(tau_index,3) 
+        !write(*,*) "From fortran: s6:", struct(tau_index,4) 
     end do
+    !write(*,*) "taus still not written"
     struct(:,1) = taus
+    !write(*,*) "taus written"
+    !write(*,*) struct
     deallocate(diff)
+    write(*,*) "Done."
 
 end subroutine
 
@@ -187,3 +211,45 @@ subroutine correlate(db,acf) ! in :correlate:ou_proc.f90
     acf = acf / acf(1)
 
 end subroutine
+
+
+subroutine histogram(xx, hist, bins) ! in :histogram:ou_proc.f90
+    
+    ! xx    : array with samples
+    ! hist  : array to store histogram
+    ! bins  : array to store bin edges
+
+    implicit none
+    real(8), intent(in), dimension(:) :: xx
+    real(8), intent(inout), dimension(:) :: bins
+    integer, intent(inout), dimension(:) :: hist
+    integer :: nbins, nsamples, ii, kk
+    real(8) :: xmax, xmin, binw
+
+    ! INITIALIZATION AND PREPARATION
+    ! nbins is the number of intervals
+
+    nbins = size(bins)
+    nsamples = size(xx)
+
+    xmax = maxval(xx)
+    xmin = minval(xx)
+    binw = ( xmax - xmin ) / nbins
+    xmax = xmax + binw ! aggiungo un bin in più agli estremi così non cado mai
+    ! fuori dagli estremi nel calcolare kk
+    xmin = xmin - binw
+    binw = ( xmax - xmin ) / nbins
+
+    do ii=1,nbins
+        bins(ii) = xmin + (ii-0.5) * binw
+    end do
+
+    ! COMPUTATION OF HISTOGRAM
+    
+    do ii = 1, nsamples
+        kk = int( ( xx(ii) - xmin ) / binw ) + 1
+        hist(kk) = hist(kk) + 1
+    end do
+
+end subroutine
+

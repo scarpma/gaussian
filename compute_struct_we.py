@@ -6,33 +6,37 @@ def compute_structure_function(db,npart=None):
     import numpy as np
     struct = np.zeros(shape=(34,4),order='f')
     if db.shape[-1] == 2000:
-        print("Database shape ok, continuing...")
+        print("Database shape ok, removing extremes")
         if npart != None:
             print(f"Database larger than npart. Taken {npart} samples randomly.")
             idx = np.random.randint(0,db.shape[0],npart)
             print("Converting database to fortran order")
-            dbn = np.asfortranarray(db[idx].T)
+            dbn = np.asfortranarray(db[idx,100:1900].T)
+            print(dbn.shape)
             ou.compute_struct(struct,dbn)
             return np.ascontiguousarray(struct)
         elif npart == None:
             print(f"Taking entire dataset, {npart} samples") 
             print("Converting database to fortran order")
-            dbn = np.asfortranarray(db.T)
+            dbn = np.asfortranarray(db[:,100:1900].T)
+            print(dbn.shape)
             ou.compute_struct(struct,dbn)
             return np.ascontiguousarray(struct)
     else:
-        print("Database with more than one component. Only x taken")
+        print("Database with more than one component. Only x taken and extremes removed")
         if npart != None:
             print(f"Database larger than npart. Taken {npart} samples randomly.")
             idx = np.random.randint(0,db.shape[0],npart)
             print("Converting database to fortran order")
-            dbn = np.asfortranarray(db[idx,:,0].T)
+            dbn = np.asfortranarray(db[idx,100:1900,0].T)
+            print(dbn.shape)
             ou.compute_struct(struct,dbn)
             return np.ascontiguousarray(struct)
         elif npart == None:
             print(f"Taking entire dataset, {npart} samples") 
             print("Converting database to fortran order")
-            dbn = np.asfortranarray(db[:,:,0].T)
+            dbn = np.asfortranarray(db[:,100:1900,0].T)
+            print(dbn.shape)
             ou.compute_struct(struct,dbn)
             return np.ascontiguousarray(struct)
 
@@ -45,6 +49,7 @@ if __name__ == '__main__' :
     number=1750
     npart=None
     media=0
+    gan_type = 'wgangp'
     
     
     import numpy as np
@@ -57,18 +62,14 @@ if __name__ == '__main__' :
 
     print("Database import: ", end="")
     if run==0:
-        #path_v = f'/storage/scarpolini/databases/gaussian_process.npy'
-        #path_v = f'/storage/scarpolini/databases/gaussian_process2.npy'
-        path_v = f'/storage/scarpolini/databases/gaussian_process2_smooth.npy'
-        #path_v = f'../databases/gaussian_process_smooth.npy'
-        print(path_v)
+        exit()
     elif media==0:
         #path_v = f'wgangps/runs/{run}/gen_trajs_{number}.npy'
-        path_v = f'/storage/scarpolini/databases/gaussian/wgangp/runs/{run}/gen_trajs_{number}.npy'
+        path_v = "../databases/gaussian/"+gan_type+f'/runs/{run}/gen_trajs_{number}.npy'
         print(path_v)
     else:
         #path_v = f'wgangps/runs/{run}/gen_trajs_{number}_media.npy'
-        path_v = f'/storage/scarpolini/databases/gaussian/wgangp/runs/{run}/gen_trajs_{number}_media.npy'
+        path_v = "../databases/gaussian/"+gan_type+f'/runs/{run}/gen_trajs_{number}_media.npy'
         print(path_v)
     
     
@@ -83,22 +84,15 @@ if __name__ == '__main__' :
     """
 
     if run==0: 
-        #save_path = f"data/real/struct_function_{npart_save}_part"
-        #save_path = f"data/real/struct_function2_{npart_save}_part"
-        save_path = f"data/real/struct_function2_{npart_save}_part_smooth"
-        #save_path = f"data/real/struct_function_{npart_save}_part_smooth"
-        print("save_path = ",save_path)
-    #elif media == 0: 
-    #    save_path = f"data/wgangps/struct_function_{npart_save}_part_gen_{run}_{number}"
-    #    print("save_path = ",save_path)
+            exit()
     elif media == 0: 
-        save_path = f"data/wgangp/struct_function_{npart_save}_part_gen_{run}_{number}"
+        save_path = f"data/"+gan_type+f"/struct_function_{npart_save}_part_gen_{run}_{number}_we"
         print("save_path = ",save_path)
     #else: 
-    #    save_path = f"data/wgangps/struct_function_{npart_save}_part_gen_{run}_{number}_media"
+    #    save_path = f"data/"+gan_type+f"/struct_function_{npart_save}_part_gen_{run}_{number}_media"
     #    print("save_path = ",save_path)
     else: 
-        save_path = f"data/wgangp/struct_function_{npart_save}_part_gen_{run}_{number}_media"
+        save_path = f"data/"+gan_type+f"/struct_function_{npart_save}_part_gen_{run}_{number}_media_we"
         print("save_path = ",save_path)
     
     

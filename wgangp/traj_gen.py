@@ -1,6 +1,6 @@
 from db_utils import *
 
-run = 16
+run = 19
 number = 1750
 
 path = f'/scratch/scarpolini/gaussian/wgangp/runs/{run}/{number}_gen.h5'
